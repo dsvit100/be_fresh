@@ -17,3 +17,31 @@ class FoodCategory(models.Model):
     # 이건 왜 쓰는지 모르겠는뎅 나중에 django 들어가서 확인하기
     def __str__(self):
         return f"{self.name} - {self.subcategory}"
+
+
+# 개별 식품 모델
+# 구체적인 식품명과 어떤 카테고리에 속하는지 관리
+# 메인 화면 버튼으로 표시할지 여부 (True/False)
+class Food(models.Model):
+    name = models.CharField(max_length=100, verbose_name='식품명')
+    # 예: 브로콜리, 닭가슴살, 우유, 토마토 등
+    
+    # 위에서 만든 FoodCategory와 연결
+    category = models.ForeignKey(
+        FoodCategory, 
+        on_delete=models.CASCADE,
+        verbose_name='카테고리'
+    )
+    
+    is_main_button = models.BooleanField(
+        default=False, 
+        verbose_name='메인 버튼 표시'
+    )
+    # True면 메인 화면에 버튼으로 표시
+
+    class Meta:
+        verbose_name = '식품'
+        verbose_name_plural = '식품들'
+    
+    def __str__(self):
+        return self.name
