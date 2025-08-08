@@ -1,1 +1,119 @@
- 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Fresh - 냉장고 관리</title>
+    <!-- 간단한 기본 스타일 -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .fridge-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 5px solid;
+        }
+        /* 상태별 색상 */
+        .status-신선 { border-left-color: #4CAF50; background-color: #E8F5E8; }
+        .status-주의 { border-left-color: #FFC107; background-color: #FFF8E1; }
+        .status-위험 { border-left-color: #FF9800; background-color: #FFF3E0; }
+        .status-폐기 { border-left-color: #F44336; background-color: #FFEBEE; }
+        
+        .main-foods {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .food-button {
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .food-button:hover {
+            background-color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧊 Be Fresh - 내 냉장고</h1>
+        
+        <!-- 로그인한 사용자 정보 표시 -->
+        <p>안녕하세요, {{ user.username }}님!</p>
+        
+        <!-- 식품 추가 버튼들 -->
+        <h2>식품 관리</h2>
+        <div class="main-foods">
+            <!-- 음식 관리 페이지로 가는 버튼 추가 -->
+            <button class="food-button" onclick="location.href='food.html'" style="background-color: #4CAF50;">
+                🍽️ 음식 관리
+            </button>
+        </div>
+        <h2>식품 추가하기</h2>
+        <div class="main-foods">
+            <!-- main_foods는 views.py에서 전달한 메인 버튼용 식품들 -->
+            {% for food in main_foods %}
+                <button class="food-button" onclick="addFood('{{ food.id }}')">
+                    {{ food.name }}
+                </button>
+            {% endfor %}
+        </div>
+        
+        <!-- 현재 냉장고 상태 -->
+        <h2>현재 냉장고 상황</h2>
+        {% if fridge_items %}
+            <!-- fridge_items는 views.py에서 전달한 위험도 순 정렬된 아이템들 -->
+            {% for item in fridge_items %}
+                <div class="fridge-item status-{{ item.status }}">
+                    <strong>{{ item.food.name }}</strong>
+                    
+                    <!-- 할인상품 표시 -->
+                    {% if item.is_discount %}
+                        <span style="background-color: red; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">할인</span>
+                    {% endif %}
+                    
+                    <!-- 남은 일수 표시 -->
+                    <div>
+                        {% if item.days_remaining > 0 %}
+                            D-{{ item.days_remaining }} ({{ item.status }})
+                        {% elif item.days_remaining == 0 %}
+                            오늘까지! ({{ item.status }})
+                        {% else %}
+                            {{ item.days_remaining|add:0|floatformat:0 }}일 지남 ({{ item.status }})
+                        {% endif %}
+                    </div>
+                    
+                    <!-- 등록일 표시 -->
+                    <small>등록일: {{ item.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>냉장고가 비어있어요! 위의 버튼으로 식품을 추가해보세요.</p>
+        {% endif %}
+    </div>
+
+    <!-- 간단한 JavaScript (나중에 실제 기능 구현 예정) -->
+    <script>
+        // 식품 추가 버튼 클릭 시 (임시)
+        function addFood(foodId) {
+            alert('식품 ID ' + foodId + ' 추가 기능은 다음 단계에서 구현할 예정입니다!');
+        }
+    </script>
+</body>
+</html>

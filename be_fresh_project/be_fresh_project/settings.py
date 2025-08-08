@@ -105,11 +105,15 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
+# django가 시간대 인식하도록 설정
 USE_TZ = True
+
+# 기본 시간대 설정 (한국 시간)
+TIME_ZONE = 'Asia/Seoul'
+
+# 국제화 설정
+USE_I18N = True
+USE_L10N = True
 
 
 # Static files (CSS, JavaScript, Images)

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be Fresh - 음식 관리</title>
+    <!-- 테일윈드 CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-400 to-purple-500 min-h-screen p-5">
+    <!-- 뒤로가기 버튼 -->
+    <button onclick="goHome()" class="fixed top-5 left-5 bg-white/20 hover:bg-white/30 text-white w-10 h-10 rounded-full flex items-center justify-center transition-all">
+        ←
+    </button>
+    
+    <!-- 메인 컨테이너 -->
+    <div class="max-w-md mx-auto bg-white rounded-2xl p-6 shadow-xl">
+        <!-- 헤더 -->
+        <div class="text-center mb-6">
+            <div class="text-2xl font-bold text-blue-500 mb-2">🥬 Be Fresh</div>
+            <div class="text-gray-600">음식 관리하기</div>
+        </div>
+
+        <!-- 냉장고 보관 음식 목록 (최상단 배치) -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-3">🧊 냉장고 보관 음식</h3>
+            <div class="space-y-3 max-h-60 overflow-y-auto" id="fridgeItems">
+                <!-- 기본 샘플 데이터 -->
+                <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="font-medium text-gray-800">🍎 사과</div>
+                        <div class="text-sm text-gray-500">구매: 2025-08-05 | 유통기한: 2025-08-15</div>
+                    </div>
+                    <!-- 유통기한까지 남은 일수 표시 -->
+                    <div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">7일</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="font-medium text-gray-800">🥛 우유</div>
+                        <div class="text-sm text-gray-500">구매: 2025-08-06 | 유통기한: 2025-08-12</div>
+                    </div>
+                    <!-- 유통기한 임박 시 노란색으로 표시 -->
+                    <div class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">4일</div>
+                </div>
+                <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="font-medium text-gray-800">🥕 당근</div>
+                        <div class="text-sm text-gray-500">구매: 2025-08-07 | 유통기한: 2025-08-10</div>
+                    </div>
+                    <!-- 유통기한 위험 시 빨간색으로 표시 -->
+                    <div class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">2일</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 카테고리 선택 그리드 -->
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <button onclick="selectCategory('vegetable')" class="bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white p-4 rounded-xl text-center transition-all transform hover:scale-105">
+                <div class="text-2xl mb-1">🥕</div>
+                <div class="text-sm font-medium">채소류</div>
+            </button>
+            <button onclick="selectCategory('fruit')" class="bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white p-4 rounded-xl text-center transition-all transform hover:scale-105">
+                <div class="text-2xl mb-1">🍎</div>
+                <div class="text-sm font-medium">과일류</div>
+            </button>
+            <button onclick="selectCategory('meat')" class="bg-gradient-to-r from-red-400 to-pink-500 hover:from-red-500 hover:to-pink-600 text-white p-4 rounded-xl text-center transition-all transform hover:scale-105">
+                <div class="text-2xl mb-1">🥩</div>
+                <div class="text-sm font-medium">육류</div>
+            </button>
+            <button onclick="selectCategory('dairy')" class="bg-gradient-to-r from-blue-400 to-cyan-500 hover:from-blue-500 hover:to-cyan-600 text-white p-4 rounded-xl text-center transition-all transform hover:scale-105">
+                <div class="text-2xl mb-1">🥛</div>
+                <div class="text-sm font-medium">유제품</div>
+            </button>
+        </div>
+
+        <!-- 음식 추가 폼 -->
+        <div class="bg-gray-50 rounded-xl p-4">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">새 음식 추가</h3>
+            
+            <!-- 음식명 입력 -->
+            <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">음식명</label>
+                <input type="text" id="foodName" placeholder="예: 사과, 우유, 닭가슴살" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+            </div>
+            
+            <!-- 카테고리 선택 드롭다운 -->
+            <div class="mb-3">
+                <label class="block text-sm font-medium text-gray-700 mb-1">카테고리</label>
+                <select id="category" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <option value="">선택해주세요</option>
+                    <option value="vegetable">채소류</option>
+                    <option value="fruit">과일류</option>
+                    <option value="meat">육류</option>
+                    <option value="dairy">유제품</option>
+                    <option value="etc">기타</option>
+                </select>
+            </div>
+            
+            <!-- 날짜 입력 그리드 -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">구매일</label>
+                    <input type="date" id="purchaseDate" 
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">유통기한</label>
+                    <input type="date" id="expiryDate" 
+                           class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+            
+            <!-- 추가 버튼 -->
+            <button onclick="addFood()" 
+                    class="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium py-3 rounded-lg transition-all transform hover:scale-105">
+                음식 추가하기
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 페이지 로드 시 오늘 날짜를 구매일 기본값으로 설정
+        document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+
+        // 홈 페이지로 돌아가는 함수
+        function goHome() {
+            window.location.href = 'home.html';
+        }
+
+        // 카테고리 버튼 클릭 시 드롭다운에 자동 선택하는 함수
+        function selectCategory(category) {
+            // 드롭다운 요소 선택
+            const categorySelect = document.getElementById('category');
+            // 선택된 카테고리 값 설정
+            categorySelect.value = category;
+            
+            // 클릭한 버튼에 시각적 피드백 (살짝 축소 효과)
+            const clickedButton = event.target.closest('button');
+            clickedButton.style.transform = 'scale(0.95)';
+            // 0.15초 후 원래 크기로 복원
+            setTimeout(() => {
+                clickedButton.style.transform = 'scale(1)';
+            }, 150);
+        }
+
+        // 새로운 음식을 추가하는 함수
+        function addFood() {
+            // 입력된 값들 가져오기
+            const foodName = document.getElementById('foodName').value.trim();
+            const category = document.getElementById('category').value;
+            const purchaseDate = document.getElementById('purchaseDate').value;
+            const expiryDate = document.getElementById('expiryDate').value;
+
+            // 필수 값 검증
+            if (!foodName || !category || !purchaseDate || !expiryDate) {
+                alert('모든 필드를 입력해주세요!');
+                return;
+            }
+
+            // 유통기한까지 남은 일수 계산
+            const today = new Date();
+            const expiry = new Date(expiryDate);
+            const timeDiff = expiry - today;
+            const daysLeft = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+            // 카테고리별 이모지 매핑
+            const categoryEmojis = {
+                'vegetable': '🥕',
+                'fruit': '🍎',
+                'meat': '🥩',
+                'dairy': '🥛',
+                'etc': '🍽️'
+            };
+
+            // 남은 일수에 따른 색상 클래스 결정
+            let badgeClasses = 'bg-green-100 text-green-800'; // 기본: 안전 (초록)
+            if (daysLeft <= 2) {
+                badgeClasses = 'bg-red-100 text-red-800'; // 위험 (빨강)
+            } else if (daysLeft <= 5) {
+                badgeClasses = 'bg-yellow-100 text-yellow-800'; // 주의 (노랑)
+            }
+
+            // 새 음식 아이템 HTML 생성
+            const newItemHTML = `
+                <div class="bg-gray-50 rounded-lg p-3 flex justify-between items-center">
+                    <div class="flex-1">
+                        <div class="font-medium text-gray-800">${categoryEmojis[category]} ${foodName}</div>
+                        <div class="text-sm text-gray-500">구매: ${purchaseDate} | 유통기한: ${expiryDate}</div>
+                    </div>
+                    <div class="${badgeClasses} px-2 py-1 rounded-full text-xs font-medium">
+                        ${daysLeft > 0 ? daysLeft + '일' : '만료'}
+                    </div>
+                </div>
+            `;
+
+            // 냉장고 목록 컨테이너 가져오기
+            const fridgeItems = document.getElementById('fridgeItems');
+            // 새 아이템을 맨 위에 추가
+            fridgeItems.insertAdjacentHTML('afterbegin', newItemHTML);
+
+            // 입력 폼 초기화
+            document.getElementById('foodName').value = '';
+            document.getElementById('category').value = '';
+            document.getElementById('expiryDate').value = '';
+            // 구매일은 오늘 날짜로 다시 설정
+            document.getElementById('purchaseDate').value = new Date().toISOString().split('T')[0];
+
+            // 성공 메시지 표시
+            showSuccessMessage('음식이 성공적으로 추가되었습니다! 🎉');
+        }
+
+        // 성공 메시지를 화면 상단에 표시하는 함수
+        function showSuccessMessage(message) {
+            // 메시지 요소 생성
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all';
+            messageDiv.textContent = message;
+            
+            // 화면에 추가
+            document.body.appendChild(messageDiv);
+            
+            // 3초 후 자동 제거
+            setTimeout(() => {
+                messageDiv.remove();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
