@@ -48,6 +48,18 @@
         .food-button:hover {
             background-color: #1976D2;
         }
+        
+        /* 섹션 구분을 위한 여백 */
+        .section {
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #2196F3;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
@@ -57,62 +69,71 @@
         <!-- 로그인한 사용자 정보 표시 -->
         <p>안녕하세요, {{ user.username }}님!</p>
         
-        <!-- 식품 추가 버튼들 -->
-        <h2>식품 관리</h2>
-        <div class="main-foods">
-            <!-- 음식 관리 페이지로 가는 버튼 추가 -->
-            <button class="food-button" onclick="location.href='food.html'" style="background-color: #4CAF50;">
-                🍽️ 음식 관리
-            </button>
-        </div>
-        <h2>식품 추가하기</h2>
-        <div class="main-foods">
-            <!-- main_foods는 views.py에서 전달한 메인 버튼용 식품들 -->
-            {% for food in main_foods %}
-                <button class="food-button" onclick="addFood('{{ food.id }}')">
-                    {{ food.name }}
-                </button>
-            {% endfor %}
+        <!-- 1. 현재 냉장고 상황 (최상단 우선 표시) -->
+        <div class="section">
+            <h2>🥕 현재 냉장고 상황</h2>
+            {% if fridge_items %}
+                <!-- fridge_items는 views.py에서 전달한 위험도 순 정렬된 아이템들 -->
+                {% for item in fridge_items %}
+                    <div class="fridge-item status-{{ item.status }}">
+                        <strong>{{ item.food.name }}</strong>
+                        
+                        <!-- 할인상품 표시 -->
+                        {% if item.is_discount %}
+                            <span style="background-color: red; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">할인</span>
+                        {% endif %}
+                        
+                        <!-- 남은 일수 표시 -->
+                        <div>
+                            {% if item.days_remaining > 0 %}
+                                D-{{ item.days_remaining }} ({{ item.status }})
+                            {% elif item.days_remaining == 0 %}
+                                오늘까지! ({{ item.status }})
+                            {% else %}
+                                {{ item.days_remaining|add:0|floatformat:0 }}일 지남 ({{ item.status }})
+                            {% endif %}
+                        </div>
+                        
+                        <!-- 등록일 표시 -->
+                        <small>등록일: {{ item.created_at|date:"Y-m-d H:i" }}</small>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: #666; padding: 40px 0;">
+                    냉장고가 비어있어요! 아래 버튼으로 식품을 추가해보세요. 📝
+                </p>
+            {% endif %}
         </div>
         
-        <!-- 현재 냉장고 상태 -->
-        <h2>현재 냉장고 상황</h2>
-        {% if fridge_items %}
-            <!-- fridge_items는 views.py에서 전달한 위험도 순 정렬된 아이템들 -->
-            {% for item in fridge_items %}
-                <div class="fridge-item status-{{ item.status }}">
-                    <strong>{{ item.food.name }}</strong>
-                    
-                    <!-- 할인상품 표시 -->
-                    {% if item.is_discount %}
-                        <span style="background-color: red; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">할인</span>
-                    {% endif %}
-                    
-                    <!-- 남은 일수 표시 -->
-                    <div>
-                        {% if item.days_remaining > 0 %}
-                            D-{{ item.days_remaining }} ({{ item.status }})
-                        {% elif item.days_remaining == 0 %}
-                            오늘까지! ({{ item.status }})
-                        {% else %}
-                            {{ item.days_remaining|add:0|floatformat:0 }}일 지남 ({{ item.status }})
-                        {% endif %}
-                    </div>
-                    
-                    <!-- 등록일 표시 -->
-                    <small>등록일: {{ item.created_at|date:"Y-m-d H:i" }}</small>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p>냉장고가 비어있어요! 위의 버튼으로 식품을 추가해보세요.</p>
-        {% endif %}
+        <!-- 2. 식품 추가하기 (두번째 우선순위) -->
+        <div class="section">
+            <h2>➕ 식품 추가하기</h2>
+            <div class="main-foods">
+                <!-- main_foods는 views.py에서 전달한 메인 버튼용 식품들 -->
+                {% for food in main_foods %}
+                    <button class="food-button" onclick="addFood('{{ food.id }}')">
+                        {{ food.name }}
+                    </button>
+                {% endfor %}
+                
+                <!-- 추가: 직접 입력 버튼 (나중에 구현할 수 있음) -->
+                <button class="food-button" onclick="addCustomFood()" style="background-color: #4CAF50;">
+                    ✏️ 직접 입력
+                </button>
+            </div>
+        </div>
     </div>
 
-    <!-- 간단한 JavaScript (나중에 실제 기능 구현 예정) -->
+    <!-- JavaScript -->
     <script>
-        // 식품 추가 버튼 클릭 시 (임시)
+        // 기존 식품 추가 버튼 클릭 시 (임시)
         function addFood(foodId) {
             alert('식품 ID ' + foodId + ' 추가 기능은 다음 단계에서 구현할 예정입니다!');
+        }
+        
+        // 직접 입력 버튼 클릭 시 (나중에 구현)
+        function addCustomFood() {
+            alert('직접 입력 기능은 다음 단계에서 구현할 예정입니다!');
         }
     </script>
 </body>
