@@ -44,10 +44,19 @@ class FridgeService:
         return status_groups
     
     @staticmethod
-    def get_expiring_soon_count(user: User, days: int = 2) -> int:
-        """지정된 일수 이내에 만료되는 아이템 개수 반환"""
+    def get_expired_count(user: User) -> int:
+        """이미 폐기해야 하는 아이템 개수 반환 (days_remaining < 0)"""
         items = FridgeService.get_sorted_fridge_items(user)
-        return len([item for item in items if item.days_remaining <= days])
+        return len([item for item in items if item.days_remaining < 0])
+    
+    @staticmethod
+    def get_expiring_soon_count(user: User, days: int = 2) -> int:
+        """
+        지정된 일수 이내에 만료되는 아이템 개수 반환
+        단, 이미 폐기해야 하는 아이템(days_remaining < 0)은 제외
+        """
+        items = FridgeService.get_sorted_fridge_items(user)
+        return len([item for item in items if 0 <= item.days_remaining <= days])
 
 
 class FoodService:

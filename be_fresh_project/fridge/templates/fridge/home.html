@@ -123,6 +123,35 @@
         .status-폐기 {
             background: linear-gradient(135deg, #f5f5f5 0%, #fafafa 100%);
         }
+        
+        /* 요약 정보 스타일 추가 */
+        .summary-alerts {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .alert-box {
+            padding: 12px 15px;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .alert-expiring {
+            background-color: #ffe6e6;
+            border: 1px solid #ffcccb;
+            color: #d9534f;
+        }
+        
+        .alert-expired {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            color: #6c757d;
+        }
     </style>
 </head>
 <body>
@@ -132,12 +161,26 @@
         <!-- 로그인한 사용자 정보 표시 -->
         <p>안녕하세요, {{ user.username }}님!</p>
         
-        <!-- 요약 정보 -->
-        {% if expiring_soon_count > 0 %}
-        <div style="background-color: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
-            <strong>⚠️ {{ expiring_soon_count }}개의 식품이 곧 만료됩니다!</strong>
+        <!-- 요약 정보 - 폐기 임박과 폐기된 아이템을 분리해서 표시 -->
+        <div class="summary-alerts">
+            {% if expiring_soon_count > 0 %}
+                <div class="alert-box alert-expiring">
+                    ⚠️ {{ expiring_soon_count }}개 식품이 곧 만료됩니다!
+                </div>
+            {% endif %}
+            
+            {% if expired_count > 0 %}
+                <div class="alert-box alert-expired">
+                    🗑️ {{ expired_count }}개 식품이 폐기 대상입니다
+                </div>
+            {% endif %}
+            
+            {% if expiring_soon_count == 0 and expired_count == 0 and fridge_items %}
+                <div class="alert-box" style="background-color: #e8f5e8; border: 1px solid #c3e6c3; color: #5cb85c;">
+                    ✅ 모든 식품이 안전합니다!
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
         
         <!-- 1. 현재 냉장고 상황 (최상단 우선 표시) -->
         <div class="section">
