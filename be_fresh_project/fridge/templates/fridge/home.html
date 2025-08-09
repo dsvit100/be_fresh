@@ -69,6 +69,13 @@
         <!-- 로그인한 사용자 정보 표시 -->
         <p>안녕하세요, {{ user.username }}님!</p>
         
+        <!-- 요약 정보 -->
+        {% if expiring_soon_count > 0 %}
+        <div style="background-color: #ffe6e6; padding: 10px; border-radius: 5px; margin-bottom: 20px; text-align: center;">
+            <strong>⚠️ {{ expiring_soon_count }}개의 식품이 곧 만료됩니다!</strong>
+        </div>
+        {% endif %}
+        
         <!-- 1. 현재 냉장고 상황 (최상단 우선 표시) -->
         <div class="section">
             <h2>🥕 현재 냉장고 상황</h2>
