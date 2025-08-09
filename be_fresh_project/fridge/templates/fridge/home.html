@@ -60,6 +60,28 @@
             padding-bottom: 5px;
             margin-bottom: 20px;
         }
+        
+        /* 냉장고 아이템 그리드 레이아웃 */
+        .fridge-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .fridge-item {
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .fridge-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body>
@@ -81,30 +103,32 @@
             <h2>🥕 현재 냉장고 상황</h2>
             {% if fridge_items %}
                 <!-- fridge_items는 views.py에서 전달한 위험도 순 정렬된 아이템들 -->
-                {% for item in fridge_items %}
-                    <div class="fridge-item status-{{ item.status }}">
-                        <strong>{{ item.food.name }}</strong>
-                        
-                        <!-- 할인상품 표시 -->
-                        {% if item.is_discount %}
-                            <span style="background-color: red; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">할인</span>
-                        {% endif %}
-                        
-                        <!-- 남은 일수 표시 -->
-                        <div>
-                            {% if item.days_remaining > 0 %}
-                                D-{{ item.days_remaining }} ({{ item.status }})
-                            {% elif item.days_remaining == 0 %}
-                                오늘까지! ({{ item.status }})
-                            {% else %}
-                                {{ item.days_remaining|add:0|floatformat:0 }}일 지남 ({{ item.status }})
+                <div class="fridge-grid">
+                    {% for item in fridge_items %}
+                        <div class="fridge-item status-{{ item.status }}">
+                            <strong>{{ item.food.name }}</strong>
+                            
+                            <!-- 할인상품 표시 -->
+                            {% if item.is_discount %}
+                                <span style="background-color: red; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">할인</span>
                             {% endif %}
+                            
+                            <!-- 남은 일수 표시 -->
+                            <div>
+                                {% if item.days_remaining > 0 %}
+                                    D-{{ item.days_remaining }} ({{ item.status }})
+                                {% elif item.days_remaining == 0 %}
+                                    오늘까지! ({{ item.status }})
+                                {% else %}
+                                    {{ item.days_remaining|add:0|floatformat:0 }}일 지남 ({{ item.status }})
+                                {% endif %}
+                            </div>
+                            
+                            <!-- 등록일 표시 -->
+                            <small>등록일: {{ item.created_at|date:"Y-m-d H:i" }}</small>
                         </div>
-                        
-                        <!-- 등록일 표시 -->
-                        <small>등록일: {{ item.created_at|date:"Y-m-d H:i" }}</small>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             {% else %}
                 <p style="text-align: center; color: #666; padding: 40px 0;">
                     냉장고가 비어있어요! 아래 버튼으로 식품을 추가해보세요. 📝
