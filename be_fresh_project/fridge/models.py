@@ -162,20 +162,29 @@ class FridgeItem(models.Model):
     # View에서 정렬할 때 이 값을 기준으로 사용
     @property
     def days_remaining(self):
+        from datetime import timedelta
+        from django.utils import timezone
+        
+        # Django timezone을 고려한 현재 날짜 계산 (시간 상관없이 날짜만)
+        today = timezone.localtime(timezone.now()).date()
+        
+        # 등록일도 로컬 시간대로 변환해서 날짜만 추출
+        purchase_date = timezone.localtime(self.created_at).date()
+        
         if self.is_discount and self.urgency:
-            # 할인상품이고 긴급도가 설정된 경우 (오늘/내일/모레)
+            # 할인상품이고 긴급도가 설정된 경우: 등록일 기준으로 계산
             urgency_days = {
-                'today': 0,                    
-                'tomorrow': 1,                 
-                'day_after_tomorrow': 2,       
+                'today': 0,                    # 등록한 당일까지
+                'tomorrow': 1,                 # 등록 다음날까지
+                'day_after_tomorrow': 2,       # 등록 후 이틀 후까지
             }
-            return urgency_days.get(self.urgency, 0)
+            target_days = urgency_days.get(self.urgency, 0)
+            expiry_date = purchase_date + timedelta(days=target_days)
+            return (expiry_date - today).days
         else:
             # 일반상품의 경우: 냉장고 등록일 + 카테고리 기본 보관일로 계산
-            from datetime import date, timedelta
-            purchase_date = self.created_at.date()  
             expiry_date = purchase_date + timedelta(days=self.food.category.default_storage_days)
-            return (expiry_date - date.today()).days
+            return (expiry_date - today).days
     
     # 냉장고 아이템 상태를 문자열로 반환
     # 시각화(색상, 애니메이션 등)할 때 사용
